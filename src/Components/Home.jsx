@@ -1,30 +1,21 @@
-// src/components/Home.jsx
 import { useNavigate } from 'react-router-dom';
+import './Home.css';
 
-const destinations = [
-  { name: 'Kerala', image: '/assets/kerala.jpg' },
-  { name: 'Goa', image: '/assets/goa.jpg' },
-  { name: 'Ladakh', image: '/assets/ladakh.jpg' }
-];
-
-function Home() {
+const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>Explore India</h1>
-      <div style={{ display: 'flex', gap: '20px' }}>
-        {destinations.map(dest => (
-          <div key={dest.name}>
-            <img src={dest.image} alt={dest.name} width="200" height="150" />
-            <h3>{dest.name}</h3>
-            <button onClick={() => navigate(`/plan?end=${dest.name}`)}>Plan Trip</button>
-            <button onClick={() => navigate(`/details/${dest.name}`)}>View Details</button>
-          </div>
-        ))}
+    <>
+      <div className="home1">
+        <h1>Travel India</h1>
+        <p><b>Discover the beauty of India<br/>Explore places, plan your route, and more!</b></p>
+        <div style={{ textAlign: 'center' }}>
+          <button className="button" onClick={() => navigate('/plan')}>Plan a Trip</button>
+          <button className="button2" onClick={() => navigate('/explore')}>Explore Places</button>
+        </div>
       </div>
-    </div>
+    </>
   );
-}
+};
 
 export default Home;
