@@ -1,5 +1,4 @@
-// src/components/MapView.jsx
-import { DirectionsRenderer, GoogleMap, LoadScript } from '@react-google-maps/api';
+import { DirectionsRenderer, GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -8,31 +7,43 @@ function MapView() {
   const [searchParams] = useSearchParams();
   const origin = searchParams.get('start');
   const destination = searchParams.get('end');
-  const waypoints = ['Mysuru', 'Coimbatore']; // Example waypoints
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace this with your key
+    libraries: ['places'],
+  });
 
   useEffect(() => {
-    if (!origin || !destination) return;
+    if (!isLoaded || !origin?.trim() || !destination?.trim()) return;
 
     const directionsService = new window.google.maps.DirectionsService();
+
     directionsService.route(
       {
         origin,
         destination,
-        waypoints: waypoints.map(p => ({ location: p, stopover: true })),
-        travelMode: 'DRIVING'
+        travelMode: 'DRIVING',
       },
       (result, status) => {
-        if (status === 'OK') setDirections(result);
+        if (status === 'OK') {
+          setDirections(result);
+        } else {
+          console.error('Directions error:', status);
+        }
       }
     );
-  }, [origin, destination]);
+  }, [isLoaded, origin, destination]);
+
+  if (!isLoaded) return <p>Loading Map...</p>;
 
   return (
-    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-      <GoogleMap center={{ lat: 20.59, lng: 78.96 }} zoom={5} mapContainerStyle={{ height: '500px' }}>
-        {directions && <DirectionsRenderer directions={directions} />}
-      </GoogleMap>
-    </LoadScript>
+    <GoogleMap
+      center={{ lat: 20.5937, lng: 78.9629 }} // India center
+      zoom={5}
+      mapContainerStyle={{ height: '500px', width: '100%' }}
+    >
+      {directions && <DirectionsRenderer directions={directions} />}
+    </GoogleMap>
   );
 }
 
